@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>贴图地球</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            /* 隐藏body窗口区域滚动条 */
+        }
+    </style>
+    <script src="https://cdn.bootcdn.net/ajax/libs/three.js/r122/three.min.js"></script>
+    <script src="JS/three/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+</head>
+<body>
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 1000);
+        camera.position.z = 20;
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0xffffff)
+        orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
+        document.body.appendChild(renderer.domElement);
+
+        const axisHelper = new THREE.AxisHelper(4)
+        scene.add(axisHelper)
+
+        /**
+         * 为物体增加材质
+         * 第一个参数要加载的资源的路径。
+         * 第二个参数加载成功后的回调, 会返回纹理对象。
+         * 第三个参数进度, 将在加载过程中进行调用。参数为XMLHttpRequest实例，实例包含total和loaded字节, 请注意three.js r84遗弃了TextureLoader进度事件, 我们其实可以填undefined。
+         * 第四个参数错误的回调。
+         */
+        const loader = new THREE.TextureLoader();
+        loader.load(
+            'img/wood.jpeg',
+            (texture) => {
+                console.log(texture)
+                const material = new THREE.MeshBasicMaterial({
+                    map: texture
+                })
+                const geometry = new THREE.BoxGeometry(2, 2, 1);
+                // 加入纹理
+                const mesh = new THREE.Mesh(geometry, material)
+                // 放入几何
+                scene.add(mesh);
+            },
+            (xhr) => {
+                // 进度(已废弃)
+                console.log(`${xhr.loaded / xhr.total * 100}%`)
+            },
+            (err) => {
+                // 错误
+                console.log(err)
+            }
+        )
+
+        const animate = function () {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        };
+        animate();
+    </script>
+</body>
+
+</html>

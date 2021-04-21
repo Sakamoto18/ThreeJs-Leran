@@ -1,0 +1,64 @@
+<html>
+<body>
+    <script src="https://cdn.bootcdn.net/ajax/libs/three.js/r122/three.min.js"></script>
+    <script src="JS/three/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
+    <script>
+        const scene = new THREE.Scene();
+        /**
+         * 相机四个属性介绍(官网解释)
+         * 
+         * 第一个属性是视野角度（FOV）。视野角度就是无论在什么时候，你所能在显示器上看到的场景的范围，它的值是一个角度。
+         * 第二个值是长宽比（aspect ratio）。 也就是你用一个物体的宽除以它的高的比值。
+         * 比如说，当你在一个宽屏电视上播放老电影时，可以看到图像仿佛是被压扁的。
+         * 接下来的两个值是远剪切面和近剪切面。 也就是说当物体所在的位置比摄像机的远剪切面远或者所在位置比近剪切面近的时候，
+         * 该物体超出的部分将不会被渲染到场景中。现在你或许并不用担心这个值的影响，
+         * 但未来为了获得更好的渲染性能，你将可以在你的应用程序里去设置它。
+         */
+        const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 1000);
+        camera.position.z = 10;
+        console.log(camera.position);
+        camera.lookAt(0, 1, 0); //设置相机方向(指向的场景对象)
+        camera.up.set(1, 1, 0); // 相机上方设置，设置谁是上方坐标轴，此处设置为x轴朝上,y轴倾斜
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x00FFFF, .5)
+        document.body.appendChild(renderer.domElement);
+        const axisHelper = new THREE.AxisHelper(2);
+        scene.add(axisHelper);
+
+        const geometry = new THREE.BoxGeometry(1, 2, 3);
+        const material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        
+        /**
+         * GUI使用，和鼠标键盘监听事件可能冲突
+         */
+        const gui = new dat.GUI();
+        // 1: 定义一个我们要改变的对象
+        const pames = {
+            x: 0
+        }
+        // 2: 把这个值放入控制器
+        gui.add(pames, "x", 0, 5).name("x轴的距离")
+        
+        function render() {
+            camera.position.x = pames.x
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+        }
+        render();
+        var controls = new THREE.OrbitControls(camera, renderer.domElement);//创建控件对象
+        /**
+         * 如果threejs代码中通过requestAnimationFrame()实现渲染器渲染方法render()的周期性调用
+         * 当通过OrbitControls操作改变相机状态的时候
+         * 没必要在通过controls.addEventListener('change', render)监听鼠标事件调用渲染函数
+         * 因为requestAnimationFrame()就会不停的调用渲染函数。
+         */
+        controls.addEventListener('change', render); //监听鼠标、键盘事件
+    </script>
+</body>
+
+</html>

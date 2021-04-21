@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>相机移动</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            /* 隐藏body窗口区域滚动条 */
+        }
+    </style>
+    <script src="https://cdn.bootcdn.net/ajax/libs/three.js/r122/three.min.js"></script>
+    <script src="JS/three/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+</head>
+<body>
+    <script>
+        const scene = new THREE.Scene();
+        /**
+         * 相机四个属性介绍(官网解释)
+         * 
+         * 第一个属性是视野角度（FOV）。视野角度就是无论在什么时候，你所能在显示器上看到的场景的范围，它的值是一个角度。
+         * 第二个值是长宽比（aspect ratio）。 也就是你用一个物体的宽除以它的高的比值。
+         * 比如说，当你在一个宽屏电视上播放老电影时，可以看到图像仿佛是被压扁的。
+         * 接下来的两个值是远剪切面和近剪切面。 也就是说当物体所在的位置比摄像机的远剪切面远或者所在位置比近剪切面近的时候，
+         * 该物体超出的部分将不会被渲染到场景中。现在你或许并不用担心这个值的影响，
+         * 但未来为了获得更好的渲染性能，你将可以在你的应用程序里去设置它。
+         */
+        const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 1000);
+        camera.position.z = 20;
+        console.log(camera.position);
+        camera.lookAt(-10, -10, 0); //设置相机方向(指向的场景对象)
+        // camera.up.set(1, 0.5, 0);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x00FFFF, .5)
+        document.body.appendChild(renderer.domElement);
+        const axisHelper = new THREE.AxisHelper(2);
+        scene.add(axisHelper);
+
+        const geometry = new THREE.BoxGeometry(1, 2, 3);
+        const material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        /**
+         * 参数介绍
+         * 1.new TWEEN.Tween("这里传入要改变的对象")。
+         * 2.to( x: 10 y: 10}, 2000), 在2000毫秒时将x与y属性变成10。
+         * 3.repeat(Infinity), 这个动无限循环,不需要循环直接start即可
+         * 4.start();, 开始执行动画。
+         * 5.stop();, 停止动画。
+         * 6.TWEEN.update();, 每次调用渲染函数都要调用一下动画的更新函数。
+         */
+
+        const tween = new TWEEN.Tween(camera.position).to({
+            x: 10,
+            y: 10
+        }, 2000).repeat(Infinity).start();
+
+        // tween.stop() // 可以停止动画
+        
+        function render() {
+            tween.update();
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+        }
+        render();
+    </script>
+</body>
+
+</html>
