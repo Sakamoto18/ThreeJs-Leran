@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>高斯模糊</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      /* 隐藏body窗口区域滚动条 */
+    }
+    /* 外层椭圆形状，内层图片只能在椭圆区域展示 */
+    .bg{
+        position: relative;
+        left: -10%;
+        width: 120%;
+        height: 100%;
+        /* border-radius: 0 0 80% 80%; */
+        overflow: hidden;
+    }
+    /* 内层显示的图片 */
+    .bg img{
+        width: 100%;
+        height: 100%;
+        filter: blur(50px);
+        overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+    <div class="bg">
+        <img src="/img/testComic.jpeg" class="test-img">
+    </div>
+</body>
+</html>
